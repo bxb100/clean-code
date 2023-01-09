@@ -1,14 +1,17 @@
 package pl.refactoring.chain.flattening_continued;
 
-import pl.refactoring.chain.flattening_continued.card.Card;
-import pl.refactoring.chain.flattening_continued.card.RANK;
-
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-import static pl.refactoring.chain.flattening_continued.RANKING.*;
+import pl.refactoring.chain.flattening_continued.card.Card;
+import static pl.refactoring.chain.flattening_continued.RANKING.FLUSH;
+import static pl.refactoring.chain.flattening_continued.RANKING.FOUR_OF_A_KIND;
+import static pl.refactoring.chain.flattening_continued.RANKING.FULL_HOUSE;
+import static pl.refactoring.chain.flattening_continued.RANKING.HIGH_CARD;
+import static pl.refactoring.chain.flattening_continued.RANKING.ONE_PAIR;
+import static pl.refactoring.chain.flattening_continued.RANKING.STRAIGHT;
+import static pl.refactoring.chain.flattening_continued.RANKING.STRAIGHT_FLUSH;
+import static pl.refactoring.chain.flattening_continued.RANKING.THREE_OF_A_KIND;
+import static pl.refactoring.chain.flattening_continued.RANKING.TWO_PAIRS;
 
 /**
  * Copyright (c) 2020 IT Train Wlodzimierz Krakowski (www.refactoring.pl)
@@ -50,40 +53,26 @@ public class HandResolver {
             return new Hand(FULL_HOUSE, handCards(cardSet));
         }
 
-        // else removed
-        // TODO Below logic assumes that cards belong to different suites
-        // Check for possible x of a kind
+        if (!cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(3) &&
+                cardSet.containsRankWithMultiplicity(3))
+            return new Hand(THREE_OF_A_KIND, handCards(cardSet));
 
-        List<RANK> ranks = cardsByRank(cardSet).keySet()
-                .stream()
-                .collect(Collectors.toList());
-
-
-
-        if (cardSet.hasRankDiversity(3)) {
-            // Look for 3 of a kind
-            if (cardsByRank(cardSet).get(ranks.get(0)).size() == 3 ||
-                    cardsByRank(cardSet).get(ranks.get(1)).size() == 3 ||
-                    cardsByRank(cardSet).get(ranks.get(2)).size() == 3)
-                return new Hand(THREE_OF_A_KIND, handCards(cardSet));
-
-            // Look for 2 pairs
-            if (cardsByRank(cardSet).get(ranks.get(0)).size() == 1 ||
-                    cardsByRank(cardSet).get(ranks.get(1)).size() == 1 ||
-                    cardsByRank(cardSet).get(ranks.get(2)).size() == 1)
-                return new Hand(TWO_PAIRS, handCards(cardSet));
+        if (!cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(3) &&
+                cardSet.containsRankWithMultiplicity(2)) {
+            return new Hand(TWO_PAIRS, handCards(cardSet));
         }
 
-        if (cardSet.hasRankDiversity(4)) {
+        if (!cardSet.isAllSameSuit() && cardSet.hasRankDiversity(4)) {
             return new Hand(ONE_PAIR, handCards(cardSet));
         }
 
-        return new Hand(HIGH_CARD, handCards(cardSet));
-    }
+        if (!cardSet.isAllSameSuit() && cardSet.hasRankDiversity(5)) {
+            return new Hand(HIGH_CARD, handCards(cardSet));
+        }
 
-    private Map<RANK, List<Card>> cardsByRank(CardSet cardSet) {
-        return handCards(cardSet).stream()
-                .collect(groupingBy(Card::getRank));
+        throw new IllegalStateException("Poker hand not recognized");
     }
 
     private List<Card> handCards(CardSet cardSet) {

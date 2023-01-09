@@ -1,15 +1,14 @@
 package pl.refactoring.chain.classes;
 
-import pl.refactoring.chain.classes.card.Card;
-import pl.refactoring.chain.classes.card.RANK;
-import pl.refactoring.chain.classes.card.SUIT;
-
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import pl.refactoring.chain.classes.card.Card;
+import pl.refactoring.chain.classes.card.RANK;
+import pl.refactoring.chain.classes.card.SUIT;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -45,13 +44,13 @@ public class CardSet {
         return sortedCards;
     }
 
-    boolean isAllSameSuit() {
+    public boolean isAllSameSuit() {
         SUIT suitCandidate = sortedCards.get(0).getSuit();
         return sortedCards.stream()
                 .allMatch(card -> card.getSuit().equals(suitCandidate));
     }
 
-    boolean isSequential() {
+    public boolean isSequential() {
         int firstOrdinal = sortedCards.get(0).getRank().ordinal();
         int secondOrdinal = sortedCards.get(1).getRank().ordinal();
         int thirdOrdinal = sortedCards.get(2).getRank().ordinal();
@@ -64,12 +63,12 @@ public class CardSet {
                 && fourthOrdinal + 1 == fifthOrdinal;
     }
 
-    boolean hasRankDiversity(int ranksDiversity) {
+    public boolean hasRankDiversity(int ranksDiversity) {
         return sortedCards.stream()
                 .collect(groupingBy(Card::getRank)).size() == ranksDiversity;
     }
 
-    boolean containsRankWithMultiplicity(int expectedRankMultiplicity) {
+    public boolean containsRankWithMultiplicity(int expectedRankMultiplicity) {
         Map<RANK, List<Card>> cardsByRank = sortedCards.stream()
                 .collect(groupingBy(Card::getRank));
 

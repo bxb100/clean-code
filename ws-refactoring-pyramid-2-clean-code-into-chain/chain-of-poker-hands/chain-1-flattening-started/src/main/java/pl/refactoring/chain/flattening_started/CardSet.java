@@ -1,12 +1,15 @@
 package pl.refactoring.chain.flattening_started;
 
-import pl.refactoring.chain.flattening_started.card.Card;
-import pl.refactoring.chain.flattening_started.card.SUIT;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
+
+import pl.refactoring.chain.flattening_started.card.Card;
+import pl.refactoring.chain.flattening_started.card.RANK;
+import pl.refactoring.chain.flattening_started.card.SUIT;
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Copyright (c) 2020 IT Train Wlodzimierz Krakowski (www.refactoring.pl)
@@ -32,8 +35,7 @@ public class CardSet {
         sortedSet.add(card4);
         sortedSet.add(card5);
 
-        sortedCards = sortedSet.stream()
-                .collect(Collectors.toList());
+        sortedCards = new ArrayList<>(sortedSet);
 
     }
 
@@ -58,5 +60,19 @@ public class CardSet {
                 && secondOrdinal + 1 == thirdOrdinal
                 && thirdOrdinal + 1 == fourthOrdinal
                 && fourthOrdinal + 1 == fifthOrdinal;
+    }
+
+    boolean hasRankDiversity(int ranksDiversity) {
+        return sortedCards.stream()
+                .collect(groupingBy(Card::getRank)).size() == ranksDiversity;
+    }
+
+    boolean containsRankWithMultiplicity(int exceptRankMultiplicity) {
+        Map<RANK, List<Card>> cardsByRank = sortedCards.stream()
+                .collect(groupingBy(Card::getRank));
+
+        return cardsByRank.values().stream()
+                .map(List::size)
+                .anyMatch(cardWithSingleRank -> cardWithSingleRank == exceptRankMultiplicity);
     }
 }

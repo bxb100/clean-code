@@ -1,18 +1,20 @@
-package pl.refactoring.chain.classes;
+package pl.refactoring.chain.classes.specs;
 
+import pl.refactoring.chain.classes.CardSet;
+import pl.refactoring.chain.classes.RANKING;
 import static pl.refactoring.chain.classes.RANKING.FULL_HOUSE;
 
-public class FullHouseSpec {
+public class FullHouseSpec implements PokerHandSpec {
     public FullHouseSpec() {
     }
 
-    boolean isFullHouse(CardSet cardSet) {
+     public boolean isSatisfiedBy(CardSet cardSet) {
         return !cardSet.isAllSameSuit() &&
                 cardSet.hasRankDiversity(2) &&
                 cardSet.containsRankWithMultiplicity(3);
     }
 
-    RANKING getFullHouseRanking() {
+    public RANKING getRanking() {
         return FULL_HOUSE;
     }
 }

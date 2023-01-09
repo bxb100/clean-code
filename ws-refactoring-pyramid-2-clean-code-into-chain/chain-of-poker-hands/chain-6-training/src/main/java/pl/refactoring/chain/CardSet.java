@@ -1,15 +1,14 @@
 package pl.refactoring.chain;
 
-import pl.refactoring.chain.card.Card;
-import pl.refactoring.chain.card.RANK;
-import pl.refactoring.chain.card.SUIT;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
+import pl.refactoring.chain.card.Card;
+import pl.refactoring.chain.card.RANK;
+import pl.refactoring.chain.card.SUIT;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -36,8 +35,7 @@ public class CardSet {
         sortedSet.add(card4);
         sortedSet.add(card5);
 
-        sortedCards = sortedSet.stream()
-                .collect(Collectors.toList());
+        sortedCards = new ArrayList<>(sortedSet);
 
     }
 
@@ -48,7 +46,7 @@ public class CardSet {
     public boolean isAllSameSuit() {
         SUIT suitCandidate = sortedCards.get(0).getSuit();
         return sortedCards.stream()
-                .allMatch(card -> card.getSuit().equals(suitCandidate));
+                .allMatch(card -> card.getSuit().equals(suitCandidate) || card.getRank() == RANK.JOKER);
     }
 
     public boolean isSequential() {
@@ -59,26 +57,28 @@ public class CardSet {
         int fourthOrdinal = sortedCards.get(3).getRank().ordinal();
         int fifthOrdinal = sortedCards.get(4).getRank().ordinal();
 
-        return firstOrdinal + 1 == secondOrdinal
-                && secondOrdinal + 1 == thirdOrdinal
-                && thirdOrdinal + 1 == fourthOrdinal
-                && fourthOrdinal + 1 == fifthOrdinal;
+        return (firstOrdinal + 1 == secondOrdinal || sortedCards.get(0).getRank() == RANK.JOKER)
+                && (secondOrdinal + 1 == thirdOrdinal || sortedCards.get(1).getRank() == RANK.JOKER)
+                && (thirdOrdinal + 1 == fourthOrdinal || sortedCards.get(2).getRank() == RANK.JOKER)
+                && (fourthOrdinal + 1 == fifthOrdinal || sortedCards.get(3).getRank() == RANK.JOKER);
     }
 
     public boolean hasRankDiversity(int rankDiversity) {
-        return sortedCards.stream()
-                .collect(groupingBy(Card::getRank)).size() == rankDiversity;
+        long jokerNums = sortedCards.stream().filter(card -> card.getRank() == RANK.JOKER).count();
+        Map<RANK, List<Card>> cardRankMap = sortedCards.stream()
+                .collect(groupingBy(Card::getRank));
+        return Math.min(cardRankMap.size() - jokerNums, cardRankMap.size()) == rankDiversity;
     }
 
-    public boolean containsRankWithMultiplicity(int expectedRankMultiplicty) {
+    public boolean containsRankWithMultiplicity(int expectedRankMultiplicity) {
+
+        long jokerNums = sortedCards.stream().filter(card -> card.getRank() == RANK.JOKER).count();
+
         Map<RANK, List<Card>> cardsByRank = getSortedCards().stream()
                 .collect(groupingBy(Card::getRank));
-        /*
-            return cardsByRank(cardSet).get(ranks.get(0)).size() == expectedRankMultiplicty ||
-            cardsByRank(cardSet).get(ranks.get(1)).size() == expectedRankMultiplicty;
-         */
+
         return cardsByRank.values().stream()
                 .map(cards -> cards.size())
-                .anyMatch(cardWithSingleRank -> cardWithSingleRank == expectedRankMultiplicty);
+                .anyMatch(cardWithSingleRank -> cardWithSingleRank == expectedRankMultiplicity);
     }
 }

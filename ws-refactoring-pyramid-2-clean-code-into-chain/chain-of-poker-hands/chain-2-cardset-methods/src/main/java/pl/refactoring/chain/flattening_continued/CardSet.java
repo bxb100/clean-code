@@ -1,15 +1,14 @@
 package pl.refactoring.chain.flattening_continued;
 
-import pl.refactoring.chain.flattening_continued.card.Card;
-import pl.refactoring.chain.flattening_continued.card.RANK;
-import pl.refactoring.chain.flattening_continued.card.SUIT;
-
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import pl.refactoring.chain.flattening_continued.card.Card;
+import pl.refactoring.chain.flattening_continued.card.RANK;
+import pl.refactoring.chain.flattening_continued.card.SUIT;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -74,7 +73,7 @@ public class CardSet {
                 .collect(groupingBy(Card::getRank));
 
         return cardsByRank.values().stream()
-                .map(cards -> cards.size())
+                .map(List::size)
                 .anyMatch(cardsWithSingleRank -> cardsWithSingleRank == expectedRankMultiplicity);
     }
 }

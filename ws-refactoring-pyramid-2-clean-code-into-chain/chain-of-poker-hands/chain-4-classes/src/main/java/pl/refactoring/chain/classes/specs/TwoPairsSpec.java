@@ -1,18 +1,20 @@
-package pl.refactoring.chain.classes;
+package pl.refactoring.chain.classes.specs;
 
+import pl.refactoring.chain.classes.CardSet;
+import pl.refactoring.chain.classes.RANKING;
 import static pl.refactoring.chain.classes.RANKING.TWO_PAIRS;
 
-public class TwoPairsSpec {
+public class TwoPairsSpec implements PokerHandSpec {
     public TwoPairsSpec() {
     }
 
-    boolean isTwoPairs(CardSet cardSet) {
+    public boolean isSatisfiedBy(CardSet cardSet) {
         return !cardSet.isAllSameSuit() &&
                 cardSet.hasRankDiversity(3) &&
                 cardSet.containsRankWithMultiplicity(2);
     }
 
-    RANKING getTwoPairsRanking() {
+    public RANKING getRanking() {
         return TWO_PAIRS;
     }
 }

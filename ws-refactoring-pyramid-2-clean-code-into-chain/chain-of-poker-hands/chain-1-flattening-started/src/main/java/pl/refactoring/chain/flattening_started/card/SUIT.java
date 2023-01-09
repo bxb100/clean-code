@@ -12,18 +12,18 @@ package pl.refactoring.chain.flattening_started.card;
  * If willing to do so, please contact the author.
  */
 public enum SUIT {
-    HEART('\u2764'),
-    DIAMOND('\u2666'),
-    CLUB('\u2663'),
-    SPADE('\u2660');
+    HEART("❤"),
+    DIAMOND("♦"),
+    CLUB("♣"),
+    SPADE("♠");
 
-    private char symbol;
+    private final String symbol;
 
-    SUIT(char symbol) {
+    SUIT(String symbol) {
         this.symbol = symbol;
     }
 
-    public char getChar() {
+    public String getChar() {
         return symbol;
     }
 }

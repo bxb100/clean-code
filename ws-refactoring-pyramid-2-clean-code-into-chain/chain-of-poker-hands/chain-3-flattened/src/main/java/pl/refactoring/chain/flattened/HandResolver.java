@@ -2,10 +2,8 @@ package pl.refactoring.chain.flattened;
 
 
 import pl.refactoring.chain.flattened.card.Card;
-import pl.refactoring.chain.flattened.card.RANK;
 
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
 import static pl.refactoring.chain.flattened.RANKING.*;
@@ -22,63 +20,92 @@ import static pl.refactoring.chain.flattened.RANKING.*;
  * If willing to do so, please contact the author.
  */
 public class HandResolver {
+    private final StraightFlushSpec straightFlushSpec = new StraightFlushSpec();
+
     public Hand hand(CardSet cardSet) {
 
-        if (cardSet.isAllSameSuit() && cardSet.isSequential()) {
-            return new Hand(STRAIGHT_FLUSH, handCards(cardSet));
+        if (straightFlushSpec.isStraightFlush(cardSet)) {
+            return new Hand(straightFlushSpec.getStraightFlush(), handCards(cardSet));
         }
 
-        if (cardSet.isAllSameSuit() && !cardSet.isSequential()) {
+        if (isFlush(cardSet)) {
             return new Hand(FLUSH, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                cardSet.hasRankDiversity(5) &&
-                cardSet.isSequential()) {
+        if (isStraight(cardSet)) {
             return new Hand(STRAIGHT, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                cardSet.hasRankDiversity(2) &&
-                cardSet.containsRankWithMultiplicity(4)) {
+        if (isFourOfAKind(cardSet)) {
             return new Hand(FOUR_OF_A_KIND, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                cardSet.hasRankDiversity(2) &&
-                cardSet.containsRankWithMultiplicity(3)) {
+        if (isFullHouse(cardSet)) {
             return new Hand(FULL_HOUSE, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                cardSet.hasRankDiversity(3) &&
-                cardSet.containsRankWithMultiplicity(3)) {
+        if (isThreeOfAKind(cardSet)) {
             return new Hand(THREE_OF_A_KIND, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                cardSet.hasRankDiversity(3) &&
-                cardSet.containsRankWithMultiplicity(2)) {
+        if (isTwoPairs(cardSet)) {
             return new Hand(TWO_PAIRS, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                cardSet.hasRankDiversity(4)) {
+        if (isOnePair(cardSet)) {
             return new Hand(ONE_PAIR, handCards(cardSet));
         }
 
-        if (!cardSet.isAllSameSuit() &&
-                ! cardSet.isSequential() &&
-                cardSet.hasRankDiversity(5)) {
+        if (isHighCard(cardSet)) {
             return new Hand(HIGH_CARD, handCards(cardSet));
         }
 
         throw new IllegalStateException("Poker Hand not recognized");
     }
 
-    private Map<RANK, List<Card>> cardsByRank(CardSet cardSet) {
-        return handCards(cardSet).stream()
-                .collect(groupingBy(Card::getRank));
+    private boolean isHighCard(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                !cardSet.isSequential() &&
+                cardSet.hasRankDiversity(5);
+    }
+
+    private boolean isOnePair(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(4);
+    }
+
+    private boolean isTwoPairs(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(3) &&
+                cardSet.containsRankWithMultiplicity(2);
+    }
+
+    private boolean isThreeOfAKind(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(3) &&
+                cardSet.containsRankWithMultiplicity(3);
+    }
+
+    private boolean isFullHouse(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(2) &&
+                cardSet.containsRankWithMultiplicity(3);
+    }
+
+    private boolean isFourOfAKind(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(2) &&
+                cardSet.containsRankWithMultiplicity(4);
+    }
+
+    private boolean isStraight(CardSet cardSet) {
+        return !cardSet.isAllSameSuit() &&
+                cardSet.hasRankDiversity(5) &&
+                cardSet.isSequential();
+    }
+
+    private boolean isFlush(CardSet cardSet) {
+        return cardSet.isAllSameSuit() && !cardSet.isSequential();
     }
 
     private List<Card> handCards(CardSet cardSet) {

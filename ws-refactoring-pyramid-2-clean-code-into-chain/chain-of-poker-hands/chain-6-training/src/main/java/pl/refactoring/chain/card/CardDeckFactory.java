@@ -19,20 +19,29 @@ import static pl.refactoring.chain.card.Card.aCard;
 public class CardDeckFactory {
     public CardDeck createDeck(int numberOfCards) {
 
-        if (numberOfCards % 4 != 0 ||
+        if (numberOfCards != 54 && (numberOfCards % 4 != 0 ||
                 numberOfCards < 4 ||
-                numberOfCards > 52) {
-            throw new IllegalArgumentException("Number of Cards must be multipler of 4 between 4 and 52");
+                numberOfCards > 52)) {
+            throw new IllegalArgumentException("Number of Cards must be multiplier of 4 between 4 and 52");
+        }
+        boolean joinJoker = false;
+        if (numberOfCards == 54) {
+            numberOfCards = 52;
+            joinJoker = true;
         }
 
         int numberOfRanks = numberOfCards / 4;
 
         Set<Card> cards = new TreeSet<>();
 
-        for (SUIT suit : SUIT.values()) {
+        for (SUIT suit : SUIT.normalPoker()) {
             for (int i = 0; i < numberOfRanks; i++) {
                 cards.add(aCard(suit, RANK.values()[i]));
             }
+        }
+        if (joinJoker) {
+            cards.add(aCard(SUIT.RED, RANK.JOKER));
+            cards.add(aCard(SUIT.BLACK, RANK.JOKER));
         }
 
         return new CardDeck(cards);

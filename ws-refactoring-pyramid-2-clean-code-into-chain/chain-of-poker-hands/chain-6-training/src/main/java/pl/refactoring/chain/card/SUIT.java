@@ -15,15 +15,23 @@ public enum SUIT {
     HEART('\u2764'),
     DIAMOND('\u2666'),
     CLUB('\u2663'),
-    SPADE('\u2660');
+    SPADE('\u2660'),
 
-    private char symbol;
+    RED('1'),
+    BLACK('2');
+
+    private final char symbol;
 
     SUIT(char symbol) {
         this.symbol = symbol;
     }
 
+    public static SUIT[] normalPoker() {
+        return new SUIT[]{HEART, DIAMOND, CLUB, SPADE};
+    }
+
     public char getChar() {
         return symbol;
     }
+
 }

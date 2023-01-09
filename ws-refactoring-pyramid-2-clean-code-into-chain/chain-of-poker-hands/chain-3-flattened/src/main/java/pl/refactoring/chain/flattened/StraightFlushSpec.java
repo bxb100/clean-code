@@ -1,6 +1,6 @@
-package pl.refactoring.chain.classes;
+package pl.refactoring.chain.flattened;
 
-import static pl.refactoring.chain.classes.RANKING.STRAIGHT_FLUSH;
+import static pl.refactoring.chain.flattened.RANKING.STRAIGHT_FLUSH;
 
 public class StraightFlushSpec {
     public StraightFlushSpec() {
@@ -10,7 +10,7 @@ public class StraightFlushSpec {
         return cardSet.isAllSameSuit() && cardSet.isSequential();
     }
 
-    RANKING getStraightFlushRanking() {
+    RANKING getStraightFlush() {
         return STRAIGHT_FLUSH;
     }
 }

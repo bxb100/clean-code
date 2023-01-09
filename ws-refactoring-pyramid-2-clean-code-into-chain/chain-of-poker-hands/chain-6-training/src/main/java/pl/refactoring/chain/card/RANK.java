@@ -12,6 +12,7 @@ package pl.refactoring.chain.card;
  * If willing to do so, please contact the author.
  */
 public enum RANK {
+    JOKER,
     ACE,
     KING,
     QUEEN,
